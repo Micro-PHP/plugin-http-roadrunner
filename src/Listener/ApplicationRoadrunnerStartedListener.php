@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Micro\Plugin\Http\Listener;
 
 use Micro\Component\EventEmitter\EventInterface;
+use Micro\Component\EventEmitter\EventListenerInterface;
 use Micro\Kernel\App\Business\Event\ApplicationReadyEvent;
 use Micro\Kernel\App\Business\Event\ApplicationReadyEventInterface;
 use Micro\Plugin\Http\Facade\HttpFacadeInterface;
@@ -22,7 +23,7 @@ use Spiral\RoadRunner;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 
-final readonly class ApplicationRoadrunnerStartedListener
+final readonly class ApplicationRoadrunnerStartedListener implements EventListenerInterface
 {
     public function __construct(
         private HttpFacadeInterface $httpFacade
@@ -52,7 +53,7 @@ final readonly class ApplicationRoadrunnerStartedListener
         while ($request = $worker->waitRequest()) {
             try {
                 $appRequest = $httpFoundationFactory->createRequest($request);
-                $appResponse = $this->httpFacade->execute($appRequest);
+                $appResponse = $this->httpFacade->execute($appRequest, false);
                 $worker->respond($httpMessageFactory->createResponse($appResponse));
             } catch (\Throwable $e) {
                 $worker->getWorker()->error((string) $e);
