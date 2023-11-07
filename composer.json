@@ -1,0 +1,64 @@
+{
+  "name": "micro/plugin-http-roadrunner",
+  "description": "Micro Framework: HTTP Roadrunner adapter",
+  "license": "MIT",
+  "type": "micro-plugin",
+  "authors": [
+    {
+      "name": "Stanislau Komar",
+      "email": "kost@micro-php.net"
+    }
+  ],
+  "require": {
+    "micro/kernel-app": "^1.6",
+    "micro/kernel-boot-plugin-depended": "^1.6",
+    "micro/plugin-event-emitter": "^1.6",
+    "micro/plugin-http-core": "^1.6",
+    "nyholm/psr7": "^1.8",
+    "spiral/roadrunner": "^2.0",
+    "symfony/psr-http-message-bridge": "^2.3"
+  },
+  "require-dev": {
+    "ergebnis/composer-normalize": "^2.29",
+    "friendsofphp/php-cs-fixer": "^3.13",
+    "phpstan/phpstan": "^1.9",
+    "phpunit/php-code-coverage": "^9.2",
+    "phpunit/phpunit": "^9.5",
+    "vimeo/psalm": "^5.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "Micro\\Plugin\\Http\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Micro\\Plugin\\Http\\Test\\Unit\\": "tests/Unit"
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "ergebnis/composer-normalize": true
+    },
+    "sort-packages": true
+  },
+  "scripts": {
+    "coverage": "XDEBUG_MODE=coverage ./vendor/bin/phpunit --coverage-text",
+    "php-cs-fix": "PHP_CS_FIXER_IGNORE_ENV=1 ./vendor/bin/php-cs-fixer fix --verbose --using-cache=no",
+    "php-cs-try": "PHP_CS_FIXER_IGNORE_ENV=1 ./vendor/bin/php-cs-fixer fix --verbose --dry-run --using-cache=no",
+    "phpstan": "./vendor/bin/phpstan analyze --no-progress",
+    "phpunit": "./vendor/bin/phpunit",
+    "psalm": "./vendor/bin/psalm --no-progress --show-info=true",
+    "statics": [
+      "@phpstan",
+      "@psalm",
+      "@php-cs-try"
+    ],
+    "test": [
+      "@statics",
+      "composer validate --strict",
+      "composer normalize",
+      "@coverage"
+    ]
+  }
+}
