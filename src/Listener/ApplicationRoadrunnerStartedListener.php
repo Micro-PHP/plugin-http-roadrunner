@@ -18,6 +18,7 @@ use Micro\Component\EventEmitter\EventListenerInterface;
 use Micro\Kernel\App\Business\Event\ApplicationReadyEvent;
 use Micro\Kernel\App\Business\Event\ApplicationReadyEventInterface;
 use Micro\Plugin\Http\Facade\HttpFacadeInterface;
+use Micro\Plugin\Http\Facade\HttpRoadrunnerFacadeInterface;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Spiral\RoadRunner;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
@@ -26,7 +27,8 @@ use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 final readonly class ApplicationRoadrunnerStartedListener implements EventListenerInterface
 {
     public function __construct(
-        private HttpFacadeInterface $httpFacade
+        private HttpFacadeInterface $httpFacade,
+        private HttpRoadrunnerFacadeInterface $httpRoadrunnerFacade
     ) {
     }
 
@@ -50,6 +52,8 @@ final readonly class ApplicationRoadrunnerStartedListener implements EventListen
 
         $worker = RoadRunner\Worker::create();
         $worker = new RoadRunner\Http\PSR7Worker($worker, $psr17Factory, $psr17Factory, $psr17Factory);
+        $i = 0;
+        $gcCollectStep = $this->httpRoadrunnerFacade->getGcCollectCyclesCount();
         while ($request = $worker->waitRequest()) {
             try {
                 $appRequest = $httpFoundationFactory->createRequest($request);
@@ -57,6 +61,10 @@ final readonly class ApplicationRoadrunnerStartedListener implements EventListen
                 $worker->respond($httpMessageFactory->createResponse($appResponse));
             } catch (\Throwable $e) {
                 $worker->getWorker()->error((string) $e);
+            } finally {
+                if (++$i === $gcCollectStep) {
+                    gc_collect_cycles();
+                }
             }
         }
     }

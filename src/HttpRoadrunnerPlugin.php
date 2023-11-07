@@ -13,11 +13,29 @@ declare(strict_types=1);
 
 namespace Micro\Plugin\Http;
 
+use Micro\Component\DependencyInjection\Container;
+use Micro\Framework\Kernel\Plugin\ConfigurableInterface;
+use Micro\Framework\Kernel\Plugin\DependencyProviderInterface;
+use Micro\Framework\Kernel\Plugin\PluginConfigurationTrait;
 use Micro\Framework\Kernel\Plugin\PluginDependedInterface;
 use Micro\Plugin\EventEmitter\EventEmitterPlugin;
+use Micro\Plugin\Http\Facade\HttpRoadrunnerFacade;
+use Micro\Plugin\Http\Facade\HttpRoadrunnerFacadeInterface;
 
-final readonly class HttpRoadrunnerPlugin implements PluginDependedInterface
+/**
+ * @method HttpRoadrunnerPluginConfigurationInterface configuration()
+ */
+final class HttpRoadrunnerPlugin implements DependencyProviderInterface, PluginDependedInterface, ConfigurableInterface
 {
+    use PluginConfigurationTrait;
+
+    public function provideDependencies(Container $container): void
+    {
+        $container->register(HttpRoadrunnerFacadeInterface::class, function () {
+            return new HttpRoadrunnerFacade($this->configuration());
+        });
+    }
+
     public function getDependedPlugins(): iterable
     {
         return [
