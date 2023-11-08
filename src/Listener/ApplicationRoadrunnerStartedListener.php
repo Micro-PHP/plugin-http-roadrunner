@@ -42,7 +42,8 @@ final readonly class ApplicationRoadrunnerStartedListener implements EventListen
     public function on(EventInterface $event): void
     {
         $sysenv = $event->systemEnvironment();
-        if ('cli' !== $sysenv || !getenv('RR_MODE')) {
+        $rrMode = getenv('RR_MODE');
+        if ('cli' !== $sysenv || 'http' !== $rrMode) {
             return;
         }
 
