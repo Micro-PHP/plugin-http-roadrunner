@@ -61,11 +61,14 @@ final readonly class ApplicationRoadrunnerStartedListener implements EventListen
                 $worker->respond($httpMessageFactory->createResponse($appResponse));
             } catch (\Throwable $e) {
                 $worker->getWorker()->error((string) $e);
-            } finally {
-                if (++$i === $gcCollectStep) {
-                    gc_collect_cycles();
-                }
             }
+
+            if (++$i < $gcCollectStep) {
+                continue;
+            }
+
+            gc_collect_cycles();
+            $i = 0;
         }
     }
 
