@@ -11,9 +11,9 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
-namespace Micro\Plugin\Http\Facade;
+namespace Micro\Plugin\HttpRoadrunner\Facade;
 
-use Micro\Plugin\Http\HttpRoadrunnerPluginConfigurationInterface;
+use Micro\Plugin\HttpRoadrunner\HttpRoadrunnerPluginConfigurationInterface;
 
 final readonly class HttpRoadrunnerFacade implements HttpRoadrunnerFacadeInterface
 {

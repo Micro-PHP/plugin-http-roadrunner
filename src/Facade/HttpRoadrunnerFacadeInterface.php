@@ -11,7 +11,7 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
-namespace Micro\Plugin\Http\Facade;
+namespace Micro\Plugin\HttpRoadrunner\Facade;
 
 interface HttpRoadrunnerFacadeInterface
 {

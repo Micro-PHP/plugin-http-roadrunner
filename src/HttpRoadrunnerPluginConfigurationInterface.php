@@ -11,7 +11,7 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
-namespace Micro\Plugin\Http;
+namespace Micro\Plugin\HttpRoadrunner;
 
 interface HttpRoadrunnerPluginConfigurationInterface
 {

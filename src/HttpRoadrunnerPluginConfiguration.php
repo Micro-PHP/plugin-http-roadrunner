@@ -11,9 +11,10 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
-namespace Micro\Plugin\Http;
+namespace Micro\Plugin\HttpRoadrunner;
 
-use Micro\Framework\Kernel\Configuration\PluginConfiguration;
+
+use Micro\Framework\BootConfiguration\Configuration\PluginConfiguration;
 
 final class HttpRoadrunnerPluginConfiguration extends PluginConfiguration implements HttpRoadrunnerPluginConfigurationInterface
 {

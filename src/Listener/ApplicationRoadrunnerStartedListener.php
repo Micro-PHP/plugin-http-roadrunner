@@ -11,14 +11,13 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
-namespace Micro\Plugin\Http\Listener;
+namespace Micro\Plugin\HttpRoadrunner\Listener;
 
-use Micro\Component\EventEmitter\EventInterface;
-use Micro\Component\EventEmitter\EventListenerInterface;
-use Micro\Kernel\App\Business\Event\ApplicationReadyEvent;
-use Micro\Kernel\App\Business\Event\ApplicationReadyEventInterface;
-use Micro\Plugin\Http\Facade\HttpFacadeInterface;
-use Micro\Plugin\Http\Facade\HttpRoadrunnerFacadeInterface;
+use Micro\Framework\EventEmitter\EventInterface;
+use Micro\Framework\EventEmitter\EventListenerInterface;
+use Micro\Framework\KernelApp\Business\Event\ApplicationReadyEventInterface;
+use Micro\Plugin\HttpCore\Facade\HttpFacadeInterface;
+use Micro\Plugin\HttpRoadrunner\Facade\HttpRoadrunnerFacadeInterface;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Spiral\RoadRunner;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
@@ -33,7 +32,7 @@ final readonly class ApplicationRoadrunnerStartedListener implements EventListen
     }
 
     /**
-     * @param ApplicationReadyEvent $event
+     * @param ApplicationReadyEventInterface $event
      *
      * @psalm-suppress MoreSpecificImplementedParamType
      *

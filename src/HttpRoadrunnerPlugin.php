@@ -11,16 +11,17 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
-namespace Micro\Plugin\Http;
+namespace Micro\Plugin\HttpRoadrunner;
 
-use Micro\Component\DependencyInjection\Container;
-use Micro\Framework\Kernel\Plugin\ConfigurableInterface;
-use Micro\Framework\Kernel\Plugin\DependencyProviderInterface;
-use Micro\Framework\Kernel\Plugin\PluginConfigurationTrait;
-use Micro\Framework\Kernel\Plugin\PluginDependedInterface;
+use Micro\Framework\BootConfiguration\Plugin\ConfigurableInterface;
+use Micro\Framework\BootConfiguration\Plugin\PluginConfigurationTrait;
+use Micro\Framework\BootDependency\Plugin\DependencyProviderInterface;
+use Micro\Framework\BootPluginDependent\Plugin\PluginDependedInterface;
+use Micro\Framework\DependencyInjection\Container;
 use Micro\Plugin\EventEmitter\EventEmitterPlugin;
-use Micro\Plugin\Http\Facade\HttpRoadrunnerFacade;
-use Micro\Plugin\Http\Facade\HttpRoadrunnerFacadeInterface;
+use Micro\Plugin\HttpCore\HttpCorePlugin;
+use Micro\Plugin\HttpRoadrunner\Facade\HttpRoadrunnerFacade;
+use Micro\Plugin\HttpRoadrunner\Facade\HttpRoadrunnerFacadeInterface;
 
 /**
  * @method HttpRoadrunnerPluginConfigurationInterface configuration()
