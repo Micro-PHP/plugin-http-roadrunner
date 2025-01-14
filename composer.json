@@ -16,7 +16,7 @@
     "micro/plugin-http-core": "^1.6",
     "nyholm/psr7": "^1.8",
     "spiral/roadrunner": "^2.0",
-    "symfony/psr-http-message-bridge": "^2.3"
+    "symfony/psr-http-message-bridge": "^2 || ^3 || ^4 || ^5 || ^6 || 7"
   },
   "require-dev": {
     "ergebnis/composer-normalize": "^2.29",

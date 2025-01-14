@@ -18,7 +18,7 @@ use Micro\Plugin\Http\HttpRoadrunnerPluginConfigurationInterface;
 final readonly class HttpRoadrunnerFacade implements HttpRoadrunnerFacadeInterface
 {
     public function __construct(
-        private HttpRoadrunnerPluginConfigurationInterface $httpRoadrunnerPluginConfiguration
+        private HttpRoadrunnerPluginConfigurationInterface $httpRoadrunnerPluginConfiguration,
     ) {
     }
 
