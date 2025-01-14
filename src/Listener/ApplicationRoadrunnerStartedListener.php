@@ -20,6 +20,7 @@ use Micro\Kernel\App\Business\Event\ApplicationReadyEventInterface;
 use Micro\Plugin\Http\Facade\HttpFacadeInterface;
 use Micro\Plugin\Http\Facade\HttpRoadrunnerFacadeInterface;
 use Nyholm\Psr7\Factory\Psr17Factory;
+use Nyholm\Psr7\Response as Psr7Response;
 use Spiral\RoadRunner;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
@@ -28,7 +29,7 @@ final readonly class ApplicationRoadrunnerStartedListener implements EventListen
 {
     public function __construct(
         private HttpFacadeInterface $httpFacade,
-        private HttpRoadrunnerFacadeInterface $httpRoadrunnerFacade
+        private HttpRoadrunnerFacadeInterface $httpRoadrunnerFacade,
     ) {
     }
 
@@ -51,17 +52,25 @@ final readonly class ApplicationRoadrunnerStartedListener implements EventListen
         $psr17Factory = new Psr17Factory();
         $httpMessageFactory = new PsrHttpFactory($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
 
-        $worker = RoadRunner\Worker::create();
-        $worker = new RoadRunner\Http\PSR7Worker($worker, $psr17Factory, $psr17Factory, $psr17Factory);
+        $psr7 = new RoadRunner\Http\PSR7Worker(RoadRunner\Worker::create(), $psr17Factory, $psr17Factory, $psr17Factory);
         $i = 0;
         $gcCollectStep = $this->httpRoadrunnerFacade->getGcCollectCyclesCount();
-        while ($request = $worker->waitRequest()) {
+        while (true) {
+            try {
+                $request = $psr7->waitRequest();
+            } catch (\Throwable $e) {
+                $psr7->respond(new Psr7Response(400));
+
+                continue;
+            }
+
             try {
                 $appRequest = $httpFoundationFactory->createRequest($request);
                 $appResponse = $this->httpFacade->execute($appRequest, false);
-                $worker->respond($httpMessageFactory->createResponse($appResponse));
+                $psr7->respond($httpMessageFactory->createResponse($appResponse));
             } catch (\Throwable $e) {
-                $worker->getWorker()->error((string) $e);
+                $psr7->respond(new Psr7Response(500));
+                $psr7->getWorker()->error((string) $e);
             } finally {
                 if (++$i === $gcCollectStep) {
                     gc_collect_cycles();
