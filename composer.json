@@ -14,8 +14,9 @@
     "micro/kernel-boot-plugin-depended": "^1.6",
     "micro/plugin-event-emitter": "^1.6",
     "micro/plugin-http-core": "^1.6",
-    "nyholm/psr7": "^1.8",
+    "nyholm/psr7": "^1",
     "spiral/roadrunner": "^2025",
+    "spiral/roadrunner-http": "^3",
     "symfony/psr-http-message-bridge": "^2 || ^3 || ^4 || ^5 || ^6 || 7"
   },
   "require-dev": {
