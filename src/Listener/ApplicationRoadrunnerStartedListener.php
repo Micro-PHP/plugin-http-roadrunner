@@ -17,8 +17,10 @@ use Micro\Component\EventEmitter\EventInterface;
 use Micro\Component\EventEmitter\EventListenerInterface;
 use Micro\Kernel\App\Business\Event\ApplicationReadyEvent;
 use Micro\Kernel\App\Business\Event\ApplicationReadyEventInterface;
+use Micro\Plugin\Http\Exception\HttpException;
 use Micro\Plugin\Http\Facade\HttpFacadeInterface;
 use Micro\Plugin\Http\Facade\HttpRoadrunnerFacadeInterface;
+use Micro\Plugin\Logger\Facade\LoggerFacadeInterface;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response as Psr7Response;
 use Spiral\RoadRunner;
@@ -30,6 +32,7 @@ final readonly class ApplicationRoadrunnerStartedListener implements EventListen
     public function __construct(
         private HttpFacadeInterface $httpFacade,
         private HttpRoadrunnerFacadeInterface $httpRoadrunnerFacade,
+        private LoggerFacadeInterface $loggerFacade,
     ) {
     }
 
@@ -48,6 +51,7 @@ final readonly class ApplicationRoadrunnerStartedListener implements EventListen
             return;
         }
 
+        $logger = $this->loggerFacade->getLogger();
         $httpFoundationFactory = new HttpFoundationFactory();
         $psr17Factory = new Psr17Factory();
         $httpMessageFactory = new PsrHttpFactory($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
@@ -58,8 +62,14 @@ final readonly class ApplicationRoadrunnerStartedListener implements EventListen
         while (true) {
             try {
                 $request = $psr7->waitRequest();
+                if(!$request) {
+                    break;
+                }
             } catch (\Throwable $e) {
-                $psr7->respond(new Psr7Response(400));
+                $psr7->respond(new Psr7Response(500));
+                if (!($e instanceof HttpException)) {
+                    $logger->error('RoadRunner Exception [Request]: '.$e->getMessage(), ['exception' => $e]);
+                }
 
                 continue;
             }
@@ -71,6 +81,7 @@ final readonly class ApplicationRoadrunnerStartedListener implements EventListen
             } catch (\Throwable $e) {
                 $psr7->respond(new Psr7Response(500));
                 $psr7->getWorker()->error((string) $e);
+                $logger->error('RoadRunner Exception [Response]: '.$e->getMessage(), ['exception' => $e]);
             } finally {
                 if (++$i === $gcCollectStep) {
                     gc_collect_cycles();
